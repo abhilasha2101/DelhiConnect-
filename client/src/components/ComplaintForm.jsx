@@ -2,8 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { aiAPI } from '../services/api';
 import { DELHI_DISTRICTS, COMPLAINT_TYPES } from '../utils/constants';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { translateDepartment } from '../utils/helpers';
 
 export default function ComplaintForm({ onSubmit, loading: submitting }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     description: '',
     category: '',
@@ -320,11 +323,11 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
       {/* AI Badge */}
       {aiResult && (
         <div className="flex flex-wrap gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg animate-fade-in text-xs">
-          <span className="font-semibold text-blue-800">🤖 AI Suggestion:</span>
-          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{aiResult.category}</span>
-          <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded">{aiResult.priority} Priority</span>
-          <span className="text-blue-600">{aiResult.assignDepartment}</span>
-          <span className="text-slate-500 ml-auto">{Math.round((aiResult.confidence || 0) * 100)}% confidence</span>
+          <span className="font-semibold text-blue-800">🤖 {t('AI Suggestion:')}</span>
+          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{t(aiResult.category)}</span>
+          <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded">{t(aiResult.priority)} {t('Priority')}</span>
+          <span className="text-blue-600">{translateDepartment(aiResult.assignDepartment)}</span>
+          <span className="text-slate-500 ml-auto">{Math.round((aiResult.confidence || 0) * 100)}% {t('confidence')}</span>
         </div>
       )}
 
@@ -334,10 +337,10 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
           <div className="flex items-center gap-2.5">
             <span className="text-xl">📍</span>
             <div>
-              <p className="text-xs font-bold text-slate-700">GPS Location Detection</p>
+              <p className="text-xs font-bold text-slate-700">{t('GPS Location Detection')}</p>
               <p className="text-[11px] text-slate-500 mt-0.5">
                 {gpsState === 'detecting' && (
-                  <span className="text-blue-600 animate-pulse font-semibold">Detecting your location...</span>
+                  <span className="text-blue-600 animate-pulse font-semibold">{t('Detecting your location...')}</span>
                 )}
                 {gpsState === 'success' && (
                   <span className="text-green-700 font-mono font-semibold flex items-center gap-1">
@@ -350,28 +353,28 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                     onClick={detectLocation}
                     className="text-red-600 hover:text-red-700 text-left font-bold hover:underline focus:outline-none"
                   >
-                    Location access denied — tap to enable or enter manually
+                    {t('Location access denied — tap to enable or enter manually')}
                   </button>
                 )}
                 {gpsState === 'idle' && (
-                  <span className="text-amber-600">Location not captured</span>
+                  <span className="text-amber-600">{t('Location not captured')}</span>
                 )}
               </p>
             </div>
           </div>
           <button type="button" onClick={detectLocation} disabled={gpsState === 'detecting'}
             className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5">
-            {gpsState === 'detecting' ? '⌛' : '🔄'} Refresh GPS
+            {gpsState === 'detecting' ? '⌛' : '🔄'} {t('Refresh GPS')}
           </button>
         </div>
 
         {/* Fallback Manual Address Input */}
         {gpsState === 'failed' && (
           <div className="animate-fade-in border-t border-slate-200 pt-3">
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Enter Address Manually *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">{t('Enter Address Manually *')}</label>
             <input 
               className="input bg-white text-xs py-2" 
-              placeholder="e.g. Block E, Connaught Place, New Delhi" 
+              placeholder={t('e.g. Block E, Connaught Place, New Delhi')} 
               value={form.address} 
               onChange={e => set('address', e.target.value)} 
               required
@@ -382,7 +385,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
 
       {/* Category Picker */}
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Select Complaint Category *</label>
+        <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('Select Complaint Category *')}</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {COMPLAINT_TYPES.map(type => (
             <button key={type.id} type="button"
@@ -390,7 +393,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
               className={`p-3 rounded-lg border text-left transition-all hover:border-blue-400 flex flex-col justify-between h-20
                 ${form.category === type.label ? 'border-2 border-blue-900 bg-blue-50/50 shadow-sm' : 'border-slate-200 bg-white'}`}>
               <span className="text-2xl">{type.icon}</span>
-              <span className="text-xs font-semibold text-slate-700 leading-tight">{type.label}</span>
+              <span className="text-xs font-semibold text-slate-700 leading-tight">{t(type.label)}</span>
             </button>
           ))}
         </div>
@@ -398,11 +401,11 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
 
       {/* Description & Voice Input */}
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Description *</label>
+        <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('Description *')}</label>
         <div className="relative">
           <textarea 
             className="input min-h-[140px] resize-none pr-12 pb-10" 
-            placeholder="Describe your complaint in detail..."
+            placeholder={t('Describe your complaint in detail...')}
             value={form.description} 
             onChange={e => set('description', e.target.value)}
             onBlur={() => form.description.trim().length > 10 && analyzeWithAI(form.description)}
@@ -416,7 +419,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                 ? 'bg-red-600 text-white animate-pulse hover:bg-red-700 scale-110 shadow-red-500/20' 
                 : 'bg-slate-100 text-slate-600 hover:bg-blue-900 hover:text-white hover:scale-105'
             }`}
-            title={listening ? 'Stop listening' : 'Voice input'}
+            title={listening ? t('Stop listening') : t('Voice input')}
           >
             {listening ? (
               <span className="relative flex h-5 w-5 items-center justify-center">
@@ -434,29 +437,29 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
             </span>
-            <span>Listening...</span>
+            <span>{t('Listening...')}</span>
           </div>
         )}
-        {aiLoading && <p className="text-xs text-blue-600 mt-1 animate-pulse">🤖 Analyzing with AI...</p>}
+        {aiLoading && <p className="text-xs text-blue-600 mt-1 animate-pulse">🤖 {t('Analyzing with AI...')}</p>}
       </div>
 
       {/* Photo Attachment */}
       <div>
         <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-          Attach Photos
-          <span className="ml-1.5 text-xs font-normal text-slate-400">(Optional · up to 3)</span>
+          {t('Attach Photos')}
+          <span className="ml-1.5 text-xs font-normal text-slate-400">({t('Optional · up to 3')})</span>
         </label>
 
         {/* Camera Permission Error */}
         {cameraError && (
           <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-xs text-red-700 font-medium mb-2">{cameraError}</p>
+            <p className="text-xs text-red-700 font-medium mb-2">{t(cameraError) || cameraError}</p>
             <button 
               type="button" 
               onClick={() => { setCameraError(''); galleryInputRef.current?.click(); }}
               className="btn-secondary text-xs py-1.5 px-3 bg-white"
             >
-              🖼️ Choose from Gallery instead
+              🖼️ {t('Choose from Gallery instead')}
             </button>
           </div>
         )}
@@ -496,8 +499,8 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                   type="button"
                   onClick={() => removePhoto(idx)}
                   className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800/80 text-white flex items-center justify-center text-xs shadow-md hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                  title="Remove photo"
-                  aria-label="Remove photo"
+                  title={t('Remove photo')}
+                  aria-label={t('Remove photo')}
                 >
                   ✕
                 </button>
@@ -520,10 +523,10 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                     className="flex-1 flex flex-col items-center justify-center gap-2
                       border-2 border-dashed border-slate-300 rounded-xl bg-slate-50
                       hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200 cursor-pointer min-h-[130px]"
-                    aria-label="Take photo"
+                    aria-label={t('Take Photo')}
                   >
                     <span className="text-3xl">📷</span>
-                    <span className="text-sm font-medium text-slate-600">Take Photo</span>
+                    <span className="text-sm font-medium text-slate-600">{t('Take Photo')}</span>
                   </button>
                 )}
                 <button
@@ -532,10 +535,10 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                   className="flex-1 flex flex-col items-center justify-center gap-2
                     border-2 border-dashed border-slate-300 rounded-xl bg-slate-50
                     hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200 cursor-pointer min-h-[130px]"
-                  aria-label="Choose from Gallery"
+                  aria-label={t('Choose from Gallery')}
                 >
                   <span className="text-3xl">🖼️</span>
-                  <span className="text-sm font-medium text-slate-600">Choose from Gallery</span>
+                  <span className="text-sm font-medium text-slate-600">{t('Choose from Gallery')}</span>
                 </button>
               </div>
             ) : (
@@ -548,10 +551,10 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                     className="flex-shrink-0 flex flex-col items-center justify-center gap-1
                       border-2 border-dashed border-slate-300 rounded-xl bg-slate-50
                       hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200 cursor-pointer"
-                    aria-label="Take another photo"
+                    aria-label={t('Take Photo')}
                   >
                     <span className="text-2xl text-slate-400 leading-none">📷</span>
-                    <span className="text-[10px] text-slate-500 font-medium">Take Photo</span>
+                    <span className="text-[10px] text-slate-500 font-medium">{t('Take Photo')}</span>
                   </button>
                 )}
                 <button
@@ -561,10 +564,10 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                   className="flex-shrink-0 flex flex-col items-center justify-center gap-1
                     border-2 border-dashed border-slate-300 rounded-xl bg-slate-50
                     hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200 cursor-pointer"
-                  aria-label="Choose from Gallery"
+                  aria-label={t('Choose from Gallery')}
                 >
                   <span className="text-2xl text-slate-400 leading-none">🖼️</span>
-                  <span className="text-[10px] text-slate-500 font-medium">Gallery</span>
+                  <span className="text-[10px] text-slate-500 font-medium">{t('Gallery')}</span>
                 </button>
               </div>
             )
@@ -585,7 +588,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
         {/* Validation error */}
         {photoError && (
           <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-            <span>⚠</span> {photoError}
+            <span>⚠</span> {t(photoError) || photoError}
           </p>
         )}
       </div>
@@ -593,13 +596,13 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
       {/* Citizen Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Your Name (Optional)</label>
-          <input className="input" placeholder="Full name" value={form.citizenName}
+          <label className="block text-sm font-semibold text-slate-700 mb-1">{t('Your Name (Optional)')}</label>
+          <input className="input" placeholder={t('Full name')} value={form.citizenName}
             onChange={e => set('citizenName', e.target.value)} />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Phone (Optional - for WhatsApp updates)</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">{t('Phone (Optional - for WhatsApp updates)')}</label>
           <input className="input" placeholder="+91XXXXXXXXXX" value={form.citizenPhone}
             onChange={e => set('citizenPhone', e.target.value)} />
         </div>
@@ -607,7 +610,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
 
       <button type="submit" disabled={submitting || !form.category || !form.description.trim()}
         className="w-full btn-primary justify-center py-3 text-base disabled:opacity-60 font-bold transition-all">
-        {submitting ? '⏳ Submitting...' : '📤 Submit Complaint'}
+        {submitting ? `⏳ ${t('Submitting...')}` : `📤 ${t('Submit Complaint')}`}
       </button>
 
       {/* Camera Modal */}
@@ -615,7 +618,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
         <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
           <div className="p-4 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent absolute top-0 left-0 right-0 z-10">
             <span className="text-white font-bold text-lg drop-shadow-md">
-              {capturedPhotoUrl ? 'Preview' : 'Take Photo'}
+              {capturedPhotoUrl ? t('Preview') : t('Take Photo')}
             </span>
             <button type="button" onClick={stopCamera} className="text-white text-3xl font-light hover:text-red-400 drop-shadow-md transition-colors">&times;</button>
           </div>
@@ -644,7 +647,7 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                 type="button" 
                 onClick={capturePhoto} 
                 className="w-16 h-16 rounded-full border-4 border-white active:scale-90 transition-transform flex items-center justify-center bg-transparent"
-                aria-label="Capture photo"
+                aria-label={t('Capture photo')}
               >
                 <div className="w-14 h-14 rounded-full bg-white opacity-90" />
               </button>
@@ -655,14 +658,14 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
                   onClick={retakePhoto}
                   className="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-medium hover:bg-zinc-700 transition-colors"
                 >
-                  Retake
+                  {t('Retake')}
                 </button>
                 <button 
                   type="button" 
                   onClick={confirmPhoto}
                   className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition-colors"
                 >
-                  Use Photo
+                  {t('Use Photo')}
                 </button>
               </div>
             )}

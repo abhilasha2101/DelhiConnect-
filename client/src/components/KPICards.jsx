@@ -36,7 +36,7 @@ export default function KPICards({ data, loading }) {
       border: 'border-green-200'
     },
     {
-      label: '⚠ Overdue (Flagged)',
+      label: 'Overdue',
       value: data?.slaBreached ?? '—',
       icon: '⚠️',
       color: 'text-red-700',

@@ -5,8 +5,10 @@ import { useAuth } from '../../context/AuthContext';
 import { StatusBadge, PriorityBadge } from '../../components/Badges';
 import StatusTimeline from '../../components/StatusTimeline';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function OfficerDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +70,7 @@ export default function OfficerDashboard() {
   const isOverdue = (c) => c.slaDeadline && new Date() > new Date(c.slaDeadline) && !['Resolved', 'Closed', 'Rejected'].includes(c.status);
 
   return (
-    <Layout title={`Officer Dashboard — ${user?.name}`}>
+    <Layout title={`${t('Officer Dashboard')} — ${user?.name}`}>
       <div className="space-y-4">
         {/* Stats row */}
         <div className="grid grid-cols-5 gap-4">
@@ -81,7 +83,7 @@ export default function OfficerDashboard() {
           ].map(s => (
             <div key={s.label} className="card p-4">
               <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
-              <div className="text-xs text-slate-500 mt-1">{s.label}</div>
+              <div className="text-xs text-slate-500 mt-1">{t(s.label)}</div>
             </div>
           ))}
         </div>
@@ -89,22 +91,22 @@ export default function OfficerDashboard() {
         {/* Table */}
         <div className="card overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200">
-            <h2 className="font-semibold text-slate-700">Assigned Complaints</h2>
+            <h2 className="font-semibold text-slate-700">{t('Assigned Complaints')}</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-slate-600">Complaint</th>
-                  <th className="text-left px-4 py-3 text-slate-600">District</th>
-                  <th className="text-left px-4 py-3 text-slate-600">Status</th>
-                  <th className="text-left px-4 py-3 text-slate-600">Priority</th>
+                  <th className="text-left px-4 py-3 text-slate-600">{t('Complaint')}</th>
+                  <th className="text-left px-4 py-3 text-slate-600">{t('District')}</th>
+                  <th className="text-left px-4 py-3 text-slate-600">{t('Status')}</th>
+                  <th className="text-left px-4 py-3 text-slate-600">{t('Priority')}</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">Loading...</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">{t('Loading...')}</td></tr>
                 ) : complaints.map(c => {
                   const overdue = isOverdue(c);
                   return (
@@ -113,18 +115,18 @@ export default function OfficerDashboard() {
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{c.title}</span>
                           {overdue && (
-                            <span className="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">Overdue</span>
+                            <span className="bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">{t('Overdue')}</span>
                           )}
                         </div>
                         <div className="text-xs text-slate-400">{c.grievanceId || `#${String(c._id).slice(-5).toUpperCase()}`}</div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{c.district}</td>
+                      <td className="px-4 py-3 text-slate-600">{t(c.district)}</td>
                       <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                       <td className="px-4 py-3"><PriorityBadge priority={c.priority} /></td>
                       <td className="px-4 py-3 text-right">
                         <button onClick={() => { setSelected(c); setStatusForm({ status: c.status, notes: '' }); setResolutionPhoto(null); }}
                           className="text-xs text-blue-700 hover:underline font-medium">
-                          Update →
+                          {t('Update')} →
                         </button>
                       </td>
                     </tr>
@@ -140,13 +142,13 @@ export default function OfficerDashboard() {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
               <div className="flex items-start justify-between mb-4">
-                <h3 className="font-bold text-slate-800">Update Complaint Status</h3>
+                <h3 className="font-bold text-slate-800">{t('Update Complaint Status')}</h3>
                 <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-lg mb-4">
                 <p className="font-semibold text-sm">{selected.title}</p>
-                <p className="text-xs text-slate-500 mt-1">{selected.district} · {selected.address}</p>
+                <p className="text-xs text-slate-500 mt-1">{t(selected.district)} · {selected.address}</p>
                 <div className="flex gap-2 mt-2">
                   <StatusBadge status={selected.status} />
                   <PriorityBadge priority={selected.priority} />
@@ -155,12 +157,12 @@ export default function OfficerDashboard() {
 
               <form onSubmit={handleUpdateStatus} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">New Status</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t('New Status')}</label>
                   <select className="input" value={statusForm.status}
                     onChange={e => setStatusForm(f => ({ ...f, status: e.target.value }))} required>
-                    <option value="">Select status</option>
+                    <option value="">{t('Select status')}</option>
                     {['Assigned', 'In Progress', 'Resolved', 'Rejected'].map(s =>
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>{t(s)}</option>
                     )}
                   </select>
                 </div>
@@ -168,7 +170,7 @@ export default function OfficerDashboard() {
                 {statusForm.status === 'Resolved' && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Resolution Photo Proof <span className="text-red-500">*</span>
+                      {t('Resolution Photo Proof')} <span className="text-red-500">*</span>
                     </label>
                     <input 
                       type="file" 
@@ -178,26 +180,26 @@ export default function OfficerDashboard() {
                       required
                     />
                     {!resolutionPhoto && (
-                      <p className="text-red-500 text-xs mt-1">Resolution photo required</p>
+                      <p className="text-red-500 text-xs mt-1">{t('Resolution photo required')}</p>
                     )}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Notes</label>
-                  <textarea className="input" rows={3} placeholder="Add update notes..."
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{t('Notes')}</label>
+                  <textarea className="input" rows={3} placeholder={t('Add update notes...')}
                     value={statusForm.notes} onChange={e => setStatusForm(f => ({ ...f, notes: e.target.value }))} />
                 </div>
                 <div className="flex gap-3">
                   <button type="submit" disabled={updating} className="flex-1 btn-primary justify-center">
-                    {updating ? 'Updating...' : 'Update Status'}
+                    {updating ? t('Updating...') : t('Update Status')}
                   </button>
-                  <button type="button" onClick={() => setSelected(null)} className="btn-secondary">Cancel</button>
+                  <button type="button" onClick={() => setSelected(null)} className="btn-secondary">{t('Cancel')}</button>
                 </div>
               </form>
 
               <div className="mt-5 border-t border-slate-200 pt-4">
-                <h4 className="text-sm font-semibold text-slate-600 mb-3">Status History</h4>
+                <h4 className="text-sm font-semibold text-slate-600 mb-3">{t('Status History')}</h4>
                 <StatusTimeline history={selected.statusHistory || []} currentStatus={selected.status} />
               </div>
             </div>

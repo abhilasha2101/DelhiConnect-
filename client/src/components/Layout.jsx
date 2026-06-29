@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Layout({ children, title }) {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -15,6 +15,12 @@ export default function Layout({ children, title }) {
           <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
             <h1 className="text-xl font-bold text-slate-800">{t(title)}</h1>
             <div className="flex items-center gap-2">
+              {!user && (
+                <button onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors mr-2">
+                  <span>🌐</span> {i18n.language === 'en' ? 'हिन्दी' : 'English'}
+                </button>
+              )}
               <span className="text-xs text-slate-400">
                 {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
               </span>

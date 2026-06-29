@@ -3,8 +3,10 @@ import Layout from '../../components/Layout';
 import KPICards from '../../components/KPICards';
 import { TrendChart, CategoryChart } from '../../components/Charts';
 import { analyticsAPI } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminOverview() {
+  const { t } = useTranslation();
   const [overview, setOverview] = useState(null);
   const [trends, setTrends] = useState([]);
   const [cats, setCats] = useState([]);
@@ -31,13 +33,13 @@ export default function AdminOverview() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Trend */}
           <div className="card p-5">
-            <h2 className="font-semibold text-slate-700 mb-4">📈 Daily Complaint Trend (30 days)</h2>
+            <h2 className="font-semibold text-slate-700 mb-4">📈 {t('Daily Complaint Trend (30 days)')}</h2>
             <TrendChart data={trends} loading={loading} />
           </div>
 
           {/* Category */}
           <div className="card p-5">
-            <h2 className="font-semibold text-slate-700 mb-4">📊 Category Breakdown</h2>
+            <h2 className="font-semibold text-slate-700 mb-4">📊 {t('Category Breakdown')}</h2>
             <CategoryChart data={cats} loading={loading} />
           </div>
         </div>
@@ -53,7 +55,7 @@ export default function AdminOverview() {
             <a key={link.href} href={link.href}
               className={`card p-4 border ${link.color} hover:shadow-md transition-shadow text-center`}>
               <div className="text-3xl mb-2">{link.icon}</div>
-              <div className="text-sm font-medium text-slate-700">{link.label}</div>
+              <div className="text-sm font-medium text-slate-700">{t(link.label)}</div>
             </a>
           ))}
         </div>

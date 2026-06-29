@@ -4,7 +4,7 @@ import { complaintsAPI } from '../../services/api';
 import { DELHI_DISTRICTS, CATEGORIES, STATUS_OPTIONS, PRIORITY_OPTIONS, DEPARTMENTS } from '../../utils/constants';
 import { StatusBadge, PriorityBadge, SLABadge, AIBadge } from '../../components/Badges';
 import StatusTimeline from '../../components/StatusTimeline';
-import { formatDateTime } from '../../utils/helpers';
+import { formatDateTime, translateDepartment } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -123,7 +123,7 @@ export default function AdminComplaints() {
   };
 
   return (
-    <Layout title="All Complaints">
+    <Layout title={t("All Complaints")}>
       <div className="space-y-4">
         {/* Filters */}
         <div className="card p-4">
@@ -209,7 +209,7 @@ export default function AdminComplaints() {
                     <td className="px-4 py-3 text-slate-600">{t(c.district)}</td>
                     <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                     <td className="px-4 py-3"><PriorityBadge priority={c.priority} /></td>
-                    <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-[150px]">{c.assignedDepartment ? t(c.assignedDepartment) : '—'}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs truncate max-w-[150px]">{c.assignedDepartment ? translateDepartment(c.assignedDepartment) : '—'}</td>
                     <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{formatDateTime(c.createdAt)}</td>
                     <td className="px-4 py-3 text-right">
                       <span className="text-xs text-blue-700 font-medium">{t('View')} →</span>
@@ -308,7 +308,7 @@ export default function AdminComplaints() {
                 <div className="flex gap-2">
                   <select className="input flex-1" value={assignForm.assignedDepartment}
                     onChange={e => setAssignForm(f => ({ ...f, assignedDepartment: e.target.value }))}>
-                    <option value="">{t('Select department') || 'Select department'}</option>
+                    <option value="">{t('Select department')}</option>
                     {DEPARTMENTS.map(d => <option key={d} value={d}>{t(d)}</option>)}
                   </select>
                   <button onClick={handleAssign} disabled={saving || !assignForm.assignedDepartment}
@@ -332,7 +332,7 @@ export default function AdminComplaints() {
                     {saving ? '...' : t('Update') || 'Update'}
                   </button>
                 </div>
-                <input className="input mt-2 text-sm" placeholder={t('Optional notes') || 'Optional notes'}
+                <input className="input mt-2 text-sm" placeholder={t('Optional notes')}
                   value={statusForm.notes} onChange={e => setStatusForm(f => ({ ...f, notes: e.target.value }))} />
               </div>
 

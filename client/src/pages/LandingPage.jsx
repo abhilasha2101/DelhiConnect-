@@ -4,8 +4,10 @@ import ComplaintForm from '../components/ComplaintForm';
 import { complaintsAPI } from '../services/api';
 import { EMERGENCY_CONTACTS, PUBLIC_SERVICES, NEARBY_FACILITY_TYPES } from '../utils/constants';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function LandingPage() {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('complaint'); // 'complaint', 'services', 'helpline', 'nearme', 'officer'
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(null);
@@ -44,9 +46,9 @@ export default function LandingPage() {
     try {
       const res = await complaintsAPI.create(formData);
       setSubmitted(res.data);
-      toast.success('Complaint submitted successfully!');
+      toast.success(t('Complaint submitted successfully!'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to submit. Please try again.');
+      toast.error(err.response?.data?.message || t('Failed to submit. Please try again.'));
     } finally {
       setSubmitting(false);
     }
@@ -129,40 +131,39 @@ export default function LandingPage() {
           
           {submitted.isMerged ? (
             <>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Good News!</h2>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('Good News!')}</h2>
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
                 <p className="text-sm text-slate-700 font-medium leading-relaxed">
-                  <span className="text-blue-600 font-bold">{submitted.reporterCount - 1} other citizens</span> have already reported this issue near you. 
-                  Your report has been added to strengthen this case!
+                  <span className="text-blue-600 font-bold">{submitted.reporterCount - 1} {t('other citizens')}</span> {t('have already reported this issue near you. Your report has been added to strengthen this case!')}
                 </p>
               </div>
             </>
           ) : (
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Complaint Submitted!</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('Complaint Submitted!')}</h2>
           )}
 
-          <p className="text-slate-500 mb-4">Your Tracking ID is:</p>
+          <p className="text-slate-500 mb-4">{t('Your Tracking ID is:')}</p>
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
             <div className="text-3xl font-mono font-bold text-slate-900">{grievanceId}</div>
-            <div className="text-sm text-slate-500 mt-1">Save this for tracking</div>
+            <div className="text-sm text-slate-500 mt-1">{t('Save this for tracking')}</div>
           </div>
           <p className="text-sm text-slate-500 mb-4">
             {submitted.citizenPhone
-              ? `WhatsApp updates will be sent to ${submitted.citizenPhone}`
-              : 'You can track your complaint status using the ID above.'}
+              ? `${t('WhatsApp updates will be sent to')} ${submitted.citizenPhone}`
+              : t('You can track your complaint status using the ID above.')}
           </p>
 
           {/* Social Sharing */}
           <div className="border-t border-b border-slate-100 py-4 mb-6">
-            <p className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-wider">Share your concern</p>
+            <p className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-wider">{t('Share your concern')}</p>
             <div className="flex gap-3 justify-center">
               <a href={fbShareUrl} target="_blank" rel="noopener noreferrer"
                 className="btn-secondary text-xs flex items-center gap-1.5 px-3 py-2 bg-[#1877F2] text-white hover:bg-[#166fe5]">
-                <span>📘</span> Share on Facebook
+                <span>📘</span> {t('Share on Facebook')}
               </a>
               <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer"
                 className="btn-secondary text-xs flex items-center gap-1.5 px-3 py-2 bg-black text-white hover:bg-slate-900">
-                <span>🐦</span> Share on X / Twitter
+                <span>🐦</span> {t('Share on X / Twitter')}
               </a>
             </div>
           </div>
@@ -170,11 +171,11 @@ export default function LandingPage() {
           <div className="flex gap-3">
             <button onClick={() => navigate(`/track/${grievanceId}`)}
               className="flex-1 bg-blue-900 text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
-              Track Status
+              {t('Track Status')}
             </button>
             <button onClick={() => setSubmitted(null)}
               className="flex-1 bg-slate-100 text-slate-700 py-3 rounded-lg font-semibold hover:bg-slate-200 transition">
-              New Complaint
+              {t('New Complaint')}
             </button>
           </div>
         </div>
@@ -191,16 +192,20 @@ export default function LandingPage() {
             <span className="text-5xl">🏛️</span>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">DelhiConnect</h1>
-              <p className="text-blue-200 text-xs md:text-sm mt-0.5 font-semibold">Chief Minister's Grievance & Public Services Portal</p>
-              <p className="text-[10px] text-slate-300 mt-0.5">National Capital Territory of Delhi</p>
+              <p className="text-blue-200 text-xs md:text-sm mt-0.5 font-semibold">{t("Chief Minister's Grievance & Public Services Portal")}</p>
+              <p className="text-[10px] text-slate-300 mt-0.5">{t('National Capital Territory of Delhi')}</p>
             </div>
           </div>
           <div className="flex gap-2">
+            <button onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en')}
+              className="btn-secondary bg-white/10 border-white/20 hover:bg-white/20 text-white text-xs flex items-center gap-1.5 px-3 py-2">
+              <span>🌐</span> {i18n.language === 'en' ? 'हिन्दी' : 'English'}
+            </button>
             <a href="/login" className="btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 text-xs">
-              Officer Login
+              {t('Officer Login')}
             </a>
             <a href="/track/search" className="btn-primary bg-yellow-600 hover:bg-yellow-700 text-xs">
-              🔍 Track Grievance
+              🔍 {t('Track Grievance')}
             </a>
           </div>
         </div>
@@ -212,36 +217,36 @@ export default function LandingPage() {
         {/* Left navigation menu — fixed width sidebar */}
         <div className="flex-shrink-0 w-full md:w-[260px] xl:w-[280px] space-y-2">
           {[
-            { id: 'complaint', label: '📝 File Civic Complaint', desc: 'Garbage, potholes, safety, noise' },
-            { id: 'services', label: '🏛️ Public Services', desc: 'Property Tax, Birth Certificate' },
-            { id: 'helpline', label: '🚨 24x7 Emergency Help', desc: 'Police, Ambulance, Fire' },
-            { id: 'nearme', label: '📍 What\'s Near Me', desc: 'Find nearby public facilities' },
-            { id: 'officer', label: '💼 Officer Field App', desc: 'Inspection & GPS Attendance' },
+            { id: 'complaint', icon: '📝', label: 'File Civic Complaint', desc: 'Garbage, potholes, safety, noise' },
+            { id: 'services', icon: '🏛️', label: 'Public Services', desc: 'Property Tax, Birth Certificate' },
+            { id: 'helpline', icon: '🚨', label: '24x7 Emergency Help', desc: 'Police, Ambulance, Fire' },
+            { id: 'nearme', icon: '📍', label: "What's Near Me", desc: 'Find nearby public facilities' },
+            { id: 'officer', icon: '💼', label: 'Officer Field App', desc: 'Inspection & GPS Attendance' },
           ].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`w-full text-left p-3.5 rounded-xl border transition-all flex flex-col justify-start
                 ${activeTab === tab.id
                   ? 'bg-blue-900 border-blue-900 text-white shadow-lg shadow-blue-900/10'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
-              <span className="text-sm font-bold">{tab.label}</span>
-              <span className={`text-[10px] mt-0.5 ${activeTab === tab.id ? 'text-blue-200' : 'text-slate-400'}`}>{tab.desc}</span>
+              <span className="text-sm font-bold">{tab.icon} {t(tab.label)}</span>
+              <span className={`text-[10px] mt-0.5 ${activeTab === tab.id ? 'text-blue-200' : 'text-slate-400'}`}>{t(tab.desc)}</span>
             </button>
           ))}
 
           {/* Quick Metrics / Performance callout */}
           <div className="bg-gradient-to-br from-amber-50 to-orange-100/60 border border-amber-200/70 rounded-xl p-4 mt-6 text-slate-800">
-            <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-2">🎯 Governance metrics</h4>
+            <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-2">🎯 {t('Governance metrics')}</h4>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-600">Total Solved</span>
+                <span className="text-slate-600">{t('Total Solved')}</span>
                 <span className="font-bold text-slate-800">94.8%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">Complaints Handled</span>
-                <span className="font-bold text-slate-800">1.2 Lakhs+</span>
+                <span className="text-slate-600">{t('Complaints Handled')}</span>
+                <span className="font-bold text-slate-800">{t('1.2 Lakhs+')}</span>
               </div>
               <p className="text-[10px] text-amber-800/80 leading-relaxed mt-1">
-                Powered by DelhiConnect for transparent and responsive urban governance.
+                {t('Powered by DelhiConnect for transparent and responsive urban governance.')}
               </p>
             </div>
           </div>
@@ -255,9 +260,9 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-1.5 h-6 bg-blue-900 rounded-full" />
-                <h2 className="text-lg font-bold text-slate-800">Civic Complaint Registration</h2>
+                <h2 className="text-lg font-bold text-slate-800">{t('Civic Complaint Registration')}</h2>
                 <span className="ml-auto text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                  🤖 Gemini AI Enabled
+                  🤖 {t('Gemini AI Enabled')}
                 </span>
               </div>
               {/* Two-column on wide screens: form (left) + info panel (right) */}
@@ -269,29 +274,29 @@ export default function LandingPage() {
                 {/* Right info panel */}
                 <aside className="hidden xl:flex flex-col gap-4 w-72 flex-shrink-0">
                   <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm">
-                    <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-1.5">⚡ Smart Routing</h3>
-                    <p className="text-blue-700 text-xs leading-relaxed">Your complaint is automatically routed to the correct department using AI analysis of your description.</p>
+                    <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-1.5">⚡ {t('Smart Routing')}</h3>
+                    <p className="text-blue-700 text-xs leading-relaxed">{t('Your complaint is automatically routed to the correct department using AI analysis of your description.')}</p>
                     <div className="mt-3 space-y-1.5 text-xs">
-                      <div className="flex justify-between"><span className="text-slate-500">Avg. Resolution Time</span><span className="font-semibold text-slate-700">3–5 days</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">SLA (High Priority)</span><span className="font-semibold text-red-600">24 hours</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">Tracked via</span><span className="font-semibold text-slate-700">Grievance ID</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('Avg. Resolution Time')}</span><span className="font-semibold text-slate-700">{t('3–5 days')}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('SLA (High Priority)')}</span><span className="font-semibold text-red-600">{t('24 hours')}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('Tracked via')}</span><span className="font-semibold text-slate-700">{t('Grievance ID')}</span></div>
                     </div>
                   </div>
                   <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs">
-                    <h3 className="font-bold text-amber-900 mb-2">💡 Tips for Faster Resolution</h3>
+                    <h3 className="font-bold text-amber-900 mb-2">💡 {t('Tips for Faster Resolution')}</h3>
                     <ul className="space-y-1.5 text-amber-800 leading-relaxed">
-                      <li>✓ Add a clear photo of the issue</li>
-                      <li>✓ Include the exact street / landmark</li>
-                      <li>✓ Mention severity (blocking road, health risk, etc.)</li>
-                      <li>✓ Provide your phone for WhatsApp updates</li>
+                      <li>✓ {t('Add a clear photo of the issue')}</li>
+                      <li>✓ {t('Include the exact street / landmark')}</li>
+                      <li>✓ {t('Mention severity (blocking road, health risk, etc.)')}</li>
+                      <li>✓ {t('Provide your phone for WhatsApp updates')}</li>
                     </ul>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs">
-                    <h3 className="font-bold text-emerald-900 mb-2">📊 This Month</h3>
+                    <h3 className="font-bold text-emerald-900 mb-2">📊 {t('This Month')}</h3>
                     <div className="space-y-1.5">
-                      <div className="flex justify-between"><span className="text-slate-500">Complaints Filed</span><span className="font-semibold text-slate-700">4,218</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">Resolved</span><span className="font-semibold text-emerald-700">3,997 (94.8%)</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">Pending</span><span className="font-semibold text-amber-600">221</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('Complaints Filed')}</span><span className="font-semibold text-slate-700">4,218</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('Resolved')}</span><span className="font-semibold text-emerald-700">3,997 (94.8%)</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">{t('Pending')}</span><span className="font-semibold text-amber-600">221</span></div>
                     </div>
                   </div>
                 </aside>
@@ -304,10 +309,10 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-fade-in">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1.5 h-6 bg-blue-900 rounded-full" />
-                <h2 className="text-lg font-bold text-slate-800">Public Services Portal</h2>
+                <h2 className="text-lg font-bold text-slate-800">{t('Public Services Portal')}</h2>
               </div>
               <p className="text-sm text-slate-500 mb-6">
-                Access direct linkages for Municipal Corporation civic utility services, tax payments, and official certifications.
+                {t('Access direct linkages for Municipal Corporation civic utility services, tax payments, and official certifications.')}
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -316,9 +321,9 @@ export default function LandingPage() {
                     className="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition group flex items-start gap-3">
                     <span className="text-3xl p-2 bg-white rounded-lg border border-slate-100 shadow-sm">{svc.icon}</span>
                     <div>
-                      <h4 className="font-bold text-sm text-slate-800 group-hover:text-blue-900">{svc.label}</h4>
-                      <p className="text-xs text-slate-500 mt-1">{svc.desc}</p>
-                      <span className="text-[11px] text-blue-700 font-semibold mt-2 inline-block">Apply Online →</span>
+                      <h4 className="font-bold text-sm text-slate-800 group-hover:text-blue-900">{t(svc.label)}</h4>
+                      <p className="text-xs text-slate-500 mt-1">{t(svc.desc)}</p>
+                      <span className="text-[11px] text-blue-700 font-semibold mt-2 inline-block">{t('Apply Online')} →</span>
                     </div>
                   </a>
                 ))}
@@ -331,10 +336,10 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-fade-in">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1.5 h-6 bg-red-600 rounded-full" />
-                <h2 className="text-lg font-bold text-slate-800">24×7 Emergency Helpline Support</h2>
+                <h2 className="text-lg font-bold text-slate-800">{t('24×7 Emergency Helpline Support')}</h2>
               </div>
               <p className="text-sm text-slate-500 mb-6">
-                Immediate government hotlines for emergency support. Click to call directly from your device.
+                {t('Immediate government hotlines for emergency support. Click to call directly from your device.')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -345,8 +350,8 @@ export default function LandingPage() {
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">{contact.icon}</span>
                       <div>
-                        <h4 className="font-bold text-sm text-slate-800">{contact.label}</h4>
-                        <p className="text-xs text-slate-400">{contact.desc}</p>
+                        <h4 className="font-bold text-sm text-slate-800">{t(contact.label)}</h4>
+                        <p className="text-xs text-slate-400">{t(contact.desc)}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -365,10 +370,10 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-fade-in">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1.5 h-6 bg-blue-950 rounded-full" />
-                <h2 className="text-lg font-bold text-slate-800">What's Near Me (Facility Locator)</h2>
+                <h2 className="text-lg font-bold text-slate-800">{t("What's Near Me (Facility Locator)")}</h2>
               </div>
               <p className="text-sm text-slate-500 mb-6">
-                Find nearby hospitals, police stations, railways, and other public facilities instantly based on your live GPS location.
+                {t('Find nearby hospitals, police stations, railways, and other public facilities instantly based on your live GPS location.')}
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-2 mb-6">
@@ -377,7 +382,7 @@ export default function LandingPage() {
                     className={`p-3 rounded-xl border text-center transition flex flex-col items-center gap-1.5
                       ${selectedNearMeType === type.id ? 'bg-blue-900 border-blue-900 text-white shadow-sm' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'}`}>
                     <span className="text-2xl">{type.icon}</span>
-                    <span className="text-xs font-bold">{type.label}</span>
+                    <span className="text-xs font-bold">{t(type.label)}</span>
                   </button>
                 ))}
               </div>
@@ -385,16 +390,16 @@ export default function LandingPage() {
               {searchingNearMe ? (
                 <div className="py-12 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
                   <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-xs">Locating facilities nearby...</span>
+                  <span className="text-xs">{t('Locating facilities nearby...')}</span>
                 </div>
               ) : nearbyResults.length > 0 ? (
                 <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Nearby Facilities Found</h3>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('Nearby Facilities Found')}</h3>
                   {nearbyResults.map((res, i) => (
                     <div key={i} className="p-3 bg-blue-50/40 border border-blue-100 rounded-xl flex justify-between items-center">
                       <div>
-                        <h4 className="text-sm font-bold text-slate-800">{res.name}</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">{res.address}</p>
+                        <h4 className="text-sm font-bold text-slate-800">{t(res.name) || res.name}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{t(res.address) || res.address}</p>
                       </div>
                       <span className="text-xs bg-blue-900 text-white px-2 py-1 rounded font-semibold whitespace-nowrap">
                         📍 {res.dist}
@@ -404,7 +409,7 @@ export default function LandingPage() {
                 </div>
               ) : (
                 <div className="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl">
-                  Select a category above to find public facilities near your location
+                  {t('Select a category above to find public facilities near your location')}
                 </div>
               )}
             </div>
@@ -415,13 +420,13 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-fade-in">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-                <h2 className="text-lg font-bold text-slate-800">Officer App Portal</h2>
+                <h2 className="text-lg font-bold text-slate-800">{t('Officer App Portal')}</h2>
                 <span className="ml-auto text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">
-                  Field Utility
+                  {t('Field Utility')}
                 </span>
               </div>
               <p className="text-sm text-slate-500 mb-6">
-                Mobile-first features for field officers including investigation reporting, attendance logs, and toilet inspection metrics.
+                {t('Mobile-first features for field officers including investigation reporting, attendance logs, and toilet inspection metrics.')}
               </p>
 
               {/* Two-column on wide screens: form (left) + recent logs (right) */}
@@ -431,43 +436,43 @@ export default function LandingPage() {
                   <form onSubmit={handleOfficerSubmit} className="space-y-4 bg-slate-50 p-4 border border-slate-200 rounded-xl">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">Officer Details</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{t('Officer Details')}</label>
                         <input className="input bg-white" value={officerForm.officerName} disabled />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">GPS Attendance/Task ID</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{t('GPS Attendance/Task ID')}</label>
                         <input className="input bg-white" value={officerForm.officerId} disabled />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">Task Type / Inspection *</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{t('Task Type / Inspection *')}</label>
                         <select className="input" value={officerForm.taskType}
                           onChange={e => setOfficerForm(f => ({ ...f, taskType: e.target.value }))}>
-                          <option value="Field Inspection">🔎 Field Inspection</option>
-                          <option value="GPS Attendance Log">📍 GPS Attendance Check-In</option>
-                          <option value="Investigation Report">📝 Investigation Report</option>
-                          <option value="Toilet Inspection">🚽 Public Toilet Inspection</option>
-                          <option value="Project Monitoring">🏗️ Project Monitoring</option>
+                          <option value="Field Inspection">🔎 {t('Field Inspection')}</option>
+                          <option value="GPS Attendance Log">📍 {t('GPS Attendance Check-In')}</option>
+                          <option value="Investigation Report">📝 {t('Investigation Report')}</option>
+                          <option value="Toilet Inspection">🚽 {t('Public Toilet Inspection')}</option>
+                          <option value="Project Monitoring">🏗️ {t('Project Monitoring')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">Location Address</label>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{t('Location Address')}</label>
                         <input className="input" value={officerForm.locationName}
                           onChange={e => setOfficerForm(f => ({ ...f, locationName: e.target.value }))} required />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">Observation / Inspection Notes *</label>
-                      <textarea className="input" rows={3} placeholder="Write comments or report details..."
+                      <label className="block text-xs font-medium text-slate-700 mb-1">{t('Observation / Inspection Notes *')}</label>
+                      <textarea className="input" rows={3} placeholder={t('Write comments or report details...')}
                         value={officerForm.notes} onChange={e => setOfficerForm(f => ({ ...f, notes: e.target.value }))} required />
                     </div>
 
                     <div className="flex justify-between items-center">
                       <div className="text-[10px] text-slate-500 font-mono">
-                        GPS: {gpsLocation ? `${gpsLocation.lat.toFixed(4)}, ${gpsLocation.lng.toFixed(4)}` : 'Detecting...'}
+                        {t('GPS:')} {gpsLocation ? `${gpsLocation.lat.toFixed(4)}, ${gpsLocation.lng.toFixed(4)}` : t('Detecting...')}
                       </div>
                       <button type="submit" className="btn-success text-xs font-bold">
-                        🚀 Log Field Activity
+                        🚀 {t('Log Field Activity')}
                       </button>
                     </div>
                   </form>
@@ -475,22 +480,22 @@ export default function LandingPage() {
 
                 {/* Right column: Recent logs (always visible, scrollable) */}
                 <div className="xl:w-80 flex-shrink-0">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Recent Field Logs</h3>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{t('Recent Field Logs')}</h3>
                   {officerLog.length === 0 ? (
                     <div className="p-6 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl text-xs">
-                      No activity logged yet. Submit the form to start tracking.
+                      {t('No activity logged yet. Submit the form to start tracking.')}
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[480px] overflow-y-auto">
                       {officerLog.map((log, index) => (
                         <div key={index} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
                           <div className="flex justify-between font-bold text-slate-800">
-                            <span>{log.taskType}</span>
+                            <span>{t(log.taskType)}</span>
                             <span className="text-slate-400">{log.timestamp}</span>
                           </div>
-                          <p className="text-slate-600 mt-1"><strong className="text-slate-700">Location:</strong> {log.locationName}</p>
+                          <p className="text-slate-600 mt-1"><strong className="text-slate-700">{t('Location:')}</strong> {log.locationName}</p>
                           <p className="text-slate-500 font-mono text-[10px]">{log.coords}</p>
-                          {log.notes && <p className="text-slate-600"><strong className="text-slate-700">Notes:</strong> {log.notes}</p>}
+                          {log.notes && <p className="text-slate-600"><strong className="text-slate-700">{t('Notes:')}</strong> {log.notes}</p>}
                         </div>
                       ))}
                     </div>

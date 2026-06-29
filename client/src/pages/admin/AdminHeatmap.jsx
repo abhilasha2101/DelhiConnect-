@@ -114,14 +114,14 @@ export default function AdminHeatmap() {
   }, [points, categoryFilter, t]);
 
   return (
-    <Layout title="Complaint Heatmap — Delhi NCT">
+    <Layout title={t("Complaint Heatmap — Delhi NCT")}>
       <div className="space-y-4">
         {/* Controls */}
         <div className="card p-4 flex flex-wrap gap-4 items-end">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">{t('Filter by Category')}</label>
             <select className="input w-48" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}>
-              <option value="">{t('All Categories')} ({points.length} {t('points') || 'points'})</option>
+              <option value="">{t('All Categories')} ({points.length} {t('points')})</option>
               {CATEGORIES.map(c => (
                 <option key={c} value={c}>{t(c)} ({points.filter(p => p.category === c).length})</option>
               ))}

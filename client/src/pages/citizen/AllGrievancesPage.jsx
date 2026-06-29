@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { complaintsAPI } from '../../services/api';
-import { formatDateTime, timeAgo } from '../../utils/helpers';
+import { formatDateTime, timeAgo, translateDepartment } from '../../utils/helpers';
 import Layout from '../../components/Layout';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -231,34 +231,34 @@ export default function AllGrievancesPage() {
     if (isOverdue || c.slaBreached) {
       return (
         <span className="text-xs bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full font-bold shadow-sm">
-          🚨 Overdue
+          🚨 {t('Overdue')}
         </span>
       );
     }
     if (['Submitted', 'Pending'].includes(c.status)) {
       return (
         <span className="text-xs bg-green-100 text-green-700 border border-green-200 px-3 py-1 rounded-full font-bold shadow-sm">
-          🟢 New / Un-Assigned
+          🟢 {t('New / Un-Assigned')}
         </span>
       );
     }
     if (['Assigned', 'In Progress', 'Reopened'].includes(c.status)) {
       return (
         <span className="text-xs bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-bold shadow-sm">
-          🟡 In Progress
+          🟡 {t('In Progress')}
         </span>
       );
     }
     if (['Resolved', 'Closed'].includes(c.status)) {
       return (
         <span className="text-xs bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full font-bold shadow-sm">
-          🔵 Closed / Complied
+          🔵 {t('Closed / Complied')}
         </span>
       );
     }
     return (
       <span className="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full font-bold shadow-sm">
-        {c.status}
+        {t(c.status)}
       </span>
     );
   };
@@ -488,7 +488,7 @@ export default function AllGrievancesPage() {
                     <div>
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-slate-900 text-base leading-snug">
-                          {c.assignedDepartment ? `${t(c.assignedDepartment)}: ` : ''}{translateComplaintText(c.title)}
+                          {c.assignedDepartment ? `${translateDepartment(c.assignedDepartment)}: ` : ''}{translateComplaintText(c.title)}
                         </h3>
                         {c.isHotspot && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200 shadow-sm flex-shrink-0">
@@ -544,10 +544,10 @@ export default function AllGrievancesPage() {
                     {/* Engagement Counts */}
                     <div className="flex gap-4 text-xs font-bold text-slate-500 border-t border-slate-100 pt-3">
                       <span className="flex items-center gap-1">
-                        👍 {upvoteCount} {upvoteCount === 1 ? t('Vote Up') : t('Vote Up') + 's'}
+                        👍 {upvoteCount} {upvoteCount === 1 ? t('Vote Up') : t('Votes')}
                       </span>
                       <span className="flex items-center gap-1">
-                        💬 {commentCount} {commentCount === 1 ? t('Comment') : t('Comment') + 's'}
+                        💬 {commentCount} {commentCount === 1 ? t('Comment') : t('Comments')}
                       </span>
                     </div>
 
@@ -627,9 +627,25 @@ export default function AllGrievancesPage() {
                             </button>
                           </form>
                         ) : (
-                          <p className="text-xs text-slate-400">
-                            Please <a href="/login" className="text-blue-700 font-bold hover:underline">login</a> to add a comment.
-                          </p>
+                          <div className="text-xs text-slate-400">
+                            {i18n.language === 'hi' ? (
+                              <span>
+                                कृपया टिप्पणी जोड़ने के लिए{' '}
+                                <a href="/login" className="text-blue-700 font-bold hover:underline">
+                                  लॉग इन
+                                </a>{' '}
+                                करें।
+                              </span>
+                            ) : (
+                              <span>
+                                Please{' '}
+                                <a href="/login" className="text-blue-700 font-bold hover:underline">
+                                  login
+                                </a>{' '}
+                                to add a comment.
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}

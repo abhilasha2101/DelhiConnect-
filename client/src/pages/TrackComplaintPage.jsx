@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { complaintsAPI } from '../services/api';
 import StatusTimeline from '../components/StatusTimeline';
 import { StatusBadge, PriorityBadge, SLABadge, AIBadge } from '../components/Badges';
-import { formatDateTime, getSLARemaining } from '../utils/helpers';
+import { formatDateTime, getSLARemaining, translateDepartment } from '../utils/helpers';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const Stepper = ({ currentStatus }) => {
   const steps = [
@@ -63,6 +64,7 @@ const Stepper = ({ currentStatus }) => {
 };
 
 export default function TrackComplaintPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [complaint, setComplaint] = useState(null);
@@ -73,10 +75,14 @@ export default function TrackComplaintPage() {
 
   useEffect(() => {
     if (!id || id === 'search') {
+      setComplaint(null);
+      setError('');
       setLoading(false);
       return;
     }
     const fetchComplaint = () => {
+      setComplaint(null);
+      setError('');
       setLoading(true);
       const apiCall = id.startsWith('GR-') ? complaintsAPI.track(id) : complaintsAPI.get(id);
       apiCall
@@ -148,6 +154,12 @@ export default function TrackComplaintPage() {
     </div>
   );
 
+  if (!complaint) return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="animate-spin text-4xl">⏳</div>
+    </div>
+  );
+
   const grievanceId = complaint.grievanceId || `GR-${String(complaint._id).slice(-5).toUpperCase()}`;
   const slaRemaining = getSLARemaining(complaint.slaDeadline);
   const isOverdue = complaint.slaDeadline && new Date() > new Date(complaint.slaDeadline) && !['Resolved', 'Closed', 'Rejected'].includes(complaint.status);
@@ -193,7 +205,7 @@ export default function TrackComplaintPage() {
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
               <h2 className="font-bold text-slate-800 text-lg">{complaint.title}</h2>
-              <p className="text-slate-500 text-sm mt-1">{complaint.district} {complaint.ward && `— ${complaint.ward}`}</p>
+              <p className="text-slate-500 text-sm mt-1">{t(complaint.district)} {complaint.ward && `— ${complaint.ward}`}</p>
             </div>
             <div className="flex flex-col items-end gap-1.5">
               <StatusBadge status={complaint.status} />
@@ -204,27 +216,27 @@ export default function TrackComplaintPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 border-t border-slate-100 pt-3 text-sm">
             <div>
-              <span className="text-slate-400 text-xs font-semibold">Filed on</span>
+              <span className="text-slate-400 text-xs font-semibold">{t('Filed on')}</span>
               <p className="font-medium text-slate-700">{formatDateTime(complaint.createdAt)}</p>
             </div>
             <div>
-              <span className="text-slate-400 text-xs font-semibold">Assigned Officer / Department</span>
-              <p className="font-medium text-slate-700">{complaint.assignedDepartment || 'Not yet assigned'}</p>
+              <span className="text-slate-400 text-xs font-semibold">{t('Assigned Officer / Department')}</span>
+              <p className="font-medium text-slate-700">{complaint.assignedDepartment ? translateDepartment(complaint.assignedDepartment) : t('Not yet assigned')}</p>
             </div>
             {complaint.slaDeadline && (
               <div>
-                <span className="text-slate-400 text-xs font-semibold">SLA Deadline</span>
+                <span className="text-slate-400 text-xs font-semibold">{t('SLA Deadline')}</span>
                 <p className={`font-medium ${isOverdue ? 'text-red-600' : 'text-slate-800'}`}>
                   {formatDateTime(complaint.slaDeadline)}
                   {!isOverdue && slaRemaining !== 'Breached' && (
-                    <span className="text-xs text-green-600 ml-1">({slaRemaining} left)</span>
+                    <span className="text-xs text-green-600 ml-1">({slaRemaining} {t('left')})</span>
                   )}
                 </p>
               </div>
             )}
             {complaint.coordinates?.lat && (
               <div>
-                <span className="text-slate-400 text-xs font-semibold">GPS Coordinates</span>
+                <span className="text-slate-400 text-xs font-semibold">{t('GPS Coordinates')}</span>
                 <p className="font-medium text-slate-700 font-mono text-xs">
                   {complaint.coordinates.lat.toFixed(5)}, {complaint.coordinates.lng.toFixed(5)}
                 </p>
@@ -232,7 +244,7 @@ export default function TrackComplaintPage() {
             )}
             {complaint.resolvedAt && (
               <div>
-                <span className="text-slate-400 text-xs font-semibold">Resolved on</span>
+                <span className="text-slate-400 text-xs font-semibold">{t('Resolved on')}</span>
                 <p className="font-medium text-green-700">{formatDateTime(complaint.resolvedAt)}</p>
               </div>
             )}
@@ -308,7 +320,7 @@ export default function TrackComplaintPage() {
         {/* Photos (Attached by citizen initially) */}
         {complaint.photos?.length > 0 && (
           <div className="card p-5">
-            <h3 className="font-semibold text-slate-700 mb-3">📷 Attached Citizen Photos</h3>
+            <h3 className="font-semibold text-slate-700 mb-3">📷 {t('Attached Citizen Photos')}</h3>
             <div className="flex gap-3 flex-wrap">
               {complaint.photos.map((url, i) => (
                 <img key={i} src={url} alt="Initial complaint proof" className="w-24 h-24 object-cover rounded-lg border border-slate-200" />
@@ -319,12 +331,12 @@ export default function TrackComplaintPage() {
 
         {/* Timeline (Transparency Audit) */}
         <div className="card p-5">
-          <h3 className="font-semibold text-slate-700 mb-4">📅 Status Timeline (Transparency Audit)</h3>
+          <h3 className="font-semibold text-slate-700 mb-4">📅 {t('Status Timeline (Transparency Audit)')}</h3>
           <StatusTimeline history={complaint.statusHistory || []} currentStatus={complaint.status} />
         </div>
 
         <div className="text-center text-sm text-slate-400 pb-4">
-          <p>Need help? Call CM Helpline: <a href="tel:1076" className="text-blue-700 font-medium font-mono">1076</a></p>
+          <p>{t('Need help? Call CM Helpline:')} <a href="tel:1076" className="text-blue-700 font-medium font-mono">1076</a></p>
         </div>
       </div>
     </div>

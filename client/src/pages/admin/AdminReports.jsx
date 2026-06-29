@@ -3,8 +3,10 @@ import Layout from '../../components/Layout';
 import { reportsAPI } from '../../services/api';
 import { downloadBlob } from '../../utils/helpers';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminReports() {
+  const { t } = useTranslation();
   const [dateRange, setDateRange] = useState(() => ({
     startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0]
@@ -13,13 +15,13 @@ export default function AdminReports() {
 
   const generate = async () => {
     setGenerating(true);
-    const tid = toast.loading('Generating PDF report...');
+    const tid = toast.loading(t('Generating PDF report...'));
     try {
       const res = await reportsAPI.generate(dateRange);
       downloadBlob(res.data, `delhi-cm-report-${dateRange.startDate}-to-${dateRange.endDate}.pdf`);
-      toast.success('Report downloaded!', { id: tid });
+      toast.success(t('Report downloaded!'), { id: tid });
     } catch {
-      toast.error('Failed to generate report', { id: tid });
+      toast.error(t('Failed to generate report'), { id: tid });
     } finally {
       setGenerating(false);
     }
@@ -49,19 +51,19 @@ export default function AdminReports() {
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">📄</div>
             <div>
-              <h2 className="font-bold text-slate-800">PDF Report Generator</h2>
-              <p className="text-sm text-slate-500">Generate comprehensive complaint reports for CM Office</p>
+              <h2 className="font-bold text-slate-800">{t('PDF Report Generator')}</h2>
+              <p className="text-sm text-slate-500">{t('Generate comprehensive complaint reports for CM Office')}</p>
             </div>
           </div>
 
           {/* Presets */}
           <div className="mb-4">
-            <label className="block text-xs font-medium text-slate-500 mb-2">Quick Presets</label>
+            <label className="block text-xs font-medium text-slate-500 mb-2">{t('Quick Presets')}</label>
             <div className="flex flex-wrap gap-2">
               {presets.map(p => (
                 <button key={p.label} onClick={() => applyPreset(p.days)}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition">
-                  {p.label}
+                  {t(p.label)}
                 </button>
               ))}
             </div>
@@ -70,12 +72,12 @@ export default function AdminReports() {
           {/* Date Range */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">From Date</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('From Date')}</label>
               <input type="date" className="input" value={dateRange.startDate}
                 onChange={e => setDateRange(d => ({ ...d, startDate: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">To Date</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('To Date')}</label>
               <input type="date" className="input" value={dateRange.endDate}
                 onChange={e => setDateRange(d => ({ ...d, endDate: e.target.value }))} />
             </div>
@@ -83,13 +85,13 @@ export default function AdminReports() {
 
           <button onClick={generate} disabled={generating}
             className="w-full btn-primary justify-center py-3 text-base disabled:opacity-60">
-            {generating ? '⏳ Generating PDF...' : '⬇️ Generate & Download PDF Report'}
+            {generating ? t('⏳ Generating PDF...') : `⬇️ ${t('Generate & Download PDF Report')}`}
           </button>
         </div>
 
         {/* Report contents card */}
         <div className="card p-6">
-          <h3 className="font-semibold text-slate-700 mb-4">📋 Report Contents</h3>
+          <h3 className="font-semibold text-slate-700 mb-4">📋 {t('Report Contents')}</h3>
           <ul className="space-y-3">
             {[
               { icon: '🏛️', title: 'Executive Summary', desc: 'Total complaints, resolution rate, average resolution time' },
@@ -101,8 +103,8 @@ export default function AdminReports() {
               <li key={item.title} className="flex gap-3">
                 <span className="text-xl mt-0.5">{item.icon}</span>
                 <div>
-                  <p className="text-sm font-semibold text-slate-700">{item.title}</p>
-                  <p className="text-xs text-slate-500">{item.desc}</p>
+                  <p className="text-sm font-semibold text-slate-700">{t(item.title)}</p>
+                  <p className="text-xs text-slate-500">{t(item.desc)}</p>
                 </div>
               </li>
             ))}
@@ -110,7 +112,7 @@ export default function AdminReports() {
         </div>
 
         <div className="text-xs text-slate-400 text-center">
-          Reports are generated server-side using PDFKit. Data is fetched in real-time from MongoDB.
+          {t('Reports are generated server-side using PDFKit. Data is fetched in real-time from MongoDB.')}
         </div>
       </div>
     </Layout>

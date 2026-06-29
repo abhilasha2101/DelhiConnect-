@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { complaintsAPI } from '../../services/api';
 import { StatusBadge, PriorityBadge } from '../../components/Badges';
-import { timeAgo } from '../../utils/helpers';
+import { timeAgo, translateDepartment } from '../../utils/helpers';
 import Layout from '../../components/Layout';
 import { useTranslation } from 'react-i18next';
 
@@ -52,7 +52,7 @@ export default function MyComplaintsPage() {
   }, []);
 
   return (
-    <Layout title="My Complaints">
+    <Layout title={t("My Complaints")}>
       <div className="max-w-3xl space-y-4">
         {loading ? (
           <div className="text-center py-12 text-slate-400">{t('Loading...')}</div>
@@ -76,7 +76,7 @@ export default function MyComplaintsPage() {
               </div>
             </div>
             <div className="flex items-center justify-between mt-3">
-              <span className="text-xs text-slate-400">{c.assignedDepartment ? t(c.assignedDepartment) : t('Not assigned')}</span>
+              <span className="text-xs text-slate-400">{c.assignedDepartment ? translateDepartment(c.assignedDepartment) : t('Not assigned')}</span>
               <a href={`/track/${c.grievanceId || `GR-${String(c._id).slice(-5).toUpperCase()}`}`} className="text-sm text-blue-700 hover:underline font-medium">
                 {t('Track')} →
               </a>

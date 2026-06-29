@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StatusBadge, PriorityBadge, SLABadge } from './Badges';
-import { timeAgo } from '../utils/helpers';
+import { timeAgo, translateDepartment } from '../utils/helpers';
+import { useTranslation } from 'react-i18next';
 
 export default function ComplaintTable({
   complaints = [],
@@ -12,6 +13,7 @@ export default function ComplaintTable({
   pages,
   onPageChange
 }) {
+  const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState([]);
 
   const toggleSelect = (id) => setSelectedIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
@@ -36,12 +38,12 @@ export default function ComplaintTable({
       {/* Bulk actions bar */}
       {selectedIds.length > 0 && showActions && (
         <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 flex items-center gap-3">
-          <span className="text-sm font-medium text-blue-800">{selectedIds.length} selected</span>
+          <span className="text-sm font-medium text-blue-800">{selectedIds.length} {t('selected')}</span>
           <button onClick={() => onAssign?.(selectedIds)} className="text-xs btn-primary py-1">
-            Bulk Assign
+            {t('Bulk Assign')}
           </button>
           <button onClick={() => setSelectedIds([])} className="text-xs text-slate-500 hover:text-slate-700 ml-auto">
-            Clear
+            {t('Clear')}
           </button>
         </div>
       )}
@@ -56,12 +58,12 @@ export default function ComplaintTable({
                     onChange={toggleAll} className="rounded" />
                 </th>
               )}
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">Complaint</th>
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">District</th>
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">Status</th>
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">Priority</th>
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">Department</th>
-              <th className="text-left px-4 py-3 text-slate-600 font-semibold">Filed</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('Complaint')}</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('District')}</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('Status')}</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('Priority')}</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('Department')}</th>
+              <th className="text-left px-4 py-3 text-slate-600 font-semibold">{t('Filed')}</th>
               {showActions && <th className="px-4 py-3" />}
             </tr>
           </thead>
@@ -69,7 +71,7 @@ export default function ComplaintTable({
             {complaints.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-4 py-12 text-center text-slate-400">
-                  No complaints found
+                  {t('No complaints found')}
                 </td>
               </tr>
             ) : complaints.map((c) => (
@@ -87,10 +89,10 @@ export default function ComplaintTable({
                     <SLABadge breached={true} deadline={c.slaDeadline} />
                   )}
                 </td>
-                <td className="px-4 py-3 text-slate-600">{c.district}</td>
+                <td className="px-4 py-3 text-slate-600">{t(c.district)}</td>
                 <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                 <td className="px-4 py-3"><PriorityBadge priority={c.priority} /></td>
-                <td className="px-4 py-3 text-slate-600 text-xs max-w-[160px] truncate">{c.assignedDepartment || '—'}</td>
+                <td className="px-4 py-3 text-slate-600 text-xs max-w-[160px] truncate">{c.assignedDepartment ? translateDepartment(c.assignedDepartment) : '—'}</td>
                 <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{timeAgo(c.createdAt)}</td>
                 {showActions && (
                   <td className="px-4 py-3 text-right">

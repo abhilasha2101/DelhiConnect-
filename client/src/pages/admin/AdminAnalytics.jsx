@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import { TrendChart, CategoryChart, DeptPieChart, DepartmentTable } from '../../components/Charts';
 import { analyticsAPI } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminAnalytics() {
+  const { t } = useTranslation();
   const [trends, setTrends] = useState([]);
   const [cats, setCats] = useState([]);
   const [depts, setDepts] = useState([]);
@@ -31,13 +33,13 @@ export default function AdminAnalytics() {
         {/* Trend */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-700">📈 Complaint Volume Trend</h2>
+            <h2 className="font-semibold text-slate-700">📈 {t('Complaint Volume Trend')}</h2>
             <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
               {['daily', 'weekly', 'monthly'].map(p => (
                 <button key={p} onClick={() => { setPeriod(p); setLoading(true); }}
                   className={`px-3 py-1 text-xs rounded font-medium capitalize transition-all
                     ${period === p ? 'bg-white shadow text-blue-900' : 'text-slate-500 hover:text-slate-700'}`}>
-                  {p}
+                  {t(p)}
                 </button>
               ))}
             </div>
@@ -48,12 +50,12 @@ export default function AdminAnalytics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category */}
           <div className="card p-5">
-            <h2 className="font-semibold text-slate-700 mb-4">📊 Category Breakdown</h2>
+            <h2 className="font-semibold text-slate-700 mb-4">📊 {t('Category Breakdown')}</h2>
             <CategoryChart data={cats} loading={loading} />
             <div className="mt-4 space-y-1">
               {cats.slice(0, 5).map((c, i) => (
                 <div key={i} className="flex items-center justify-between text-sm py-1">
-                  <span className="text-slate-600">{c._id}</span>
+                  <span className="text-slate-600">{t(c._id)}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-24 bg-slate-100 rounded-full h-1.5">
                       <div className="bg-blue-900 h-1.5 rounded-full"
@@ -68,7 +70,7 @@ export default function AdminAnalytics() {
 
           {/* Dept Distribution */}
           <div className="card p-5">
-            <h2 className="font-semibold text-slate-700 mb-4">🏢 Department Distribution</h2>
+            <h2 className="font-semibold text-slate-700 mb-4">🏢 {t('Department Distribution')}</h2>
             <DeptPieChart data={depts} loading={loading} />
           </div>
         </div>
@@ -76,18 +78,18 @@ export default function AdminAnalytics() {
         {/* Department Table */}
         <div className="card overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-200">
-            <h2 className="font-semibold text-slate-700">🏢 Department Performance</h2>
+            <h2 className="font-semibold text-slate-700">🏢 {t('Department Performance')}</h2>
           </div>
           <DepartmentTable data={depts} loading={loading} />
         </div>
 
         {/* District Stats */}
         <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">📍 District-wise Complaint Count</h2>
+          <h2 className="font-semibold text-slate-700 mb-4">📍 {t('District-wise Complaint Count')}</h2>
           <div className="space-y-2">
             {districts.map((d, i) => (
               <div key={i} className="flex items-center gap-3">
-                <span className="text-sm text-slate-600 w-44 truncate">{d._id || 'Unknown'}</span>
+                <span className="text-sm text-slate-600 w-44 truncate">{d._id ? t(d._id) : t('Unknown')}</span>
                 <div className="flex-1 bg-slate-100 rounded-full h-2">
                   <div className="bg-blue-900 h-2 rounded-full transition-all"
                     style={{ width: `${districts[0]?.count ? (d.count / districts[0].count) * 100 : 0}%` }} />

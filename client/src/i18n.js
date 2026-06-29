@@ -615,7 +615,12 @@ const resources = {
       "No activity logged yet. Submit the form to start tracking.": "अभी तक कोई गतिविधि लॉग नहीं की गई है। ट्रैकिंग शुरू करने के लिए फॉर्म सबमिट करें।",
       "Location:": "स्थान:",
       "Notes:": "नोट्स:",
-      "Detecting...": "पता लगाया जा रहा है..."
+      "Detecting...": "पता लगाया जा रहा है...",
+
+      // CM Greeting
+      "Rekha gupta ji": "रेखा गुप्ता जी",
+      "Chief Minister of Delhi": "मुख्यमंत्री, दिल्ली",
+      "We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.": "हम दिल्ली को पारदर्शी, उत्तरदायी और डिजिटल नागरिक शासन के साथ एक विश्व स्तरीय शहर बनाने के लिए प्रतिबद्ध हैं। दिल्ली-कनेक्ट शिकायतों को दर्ज करने और ट्रैक करने के लिए आपका सीधा संपर्क है।"
     }
   }
 };

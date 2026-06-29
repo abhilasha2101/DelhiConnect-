@@ -216,6 +216,20 @@ export default function LandingPage() {
         
         {/* Left navigation menu — fixed width sidebar */}
         <div className="flex-shrink-0 w-full md:w-[260px] xl:w-[280px] space-y-2">
+          {/* CM Profile Card */}
+          <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4 flex flex-col items-center text-center shadow-sm">
+            <div className="relative w-24 h-24 mb-3 rounded-full overflow-hidden border-2 border-blue-900 shadow-inner">
+              <img src="/images/cm.png" alt="CM Rekha Gupta" className="w-full h-full object-cover object-top" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-800">{t('Rekha gupta ji')}</h4>
+            <p className="text-[10px] text-blue-900 font-semibold mb-2">{t('Chief Minister of Delhi')}</p>
+            <div className="border-t border-slate-100 pt-2 w-full">
+              <p className="text-[11px] text-slate-500 italic leading-relaxed">
+                "{t('We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.')}"
+              </p>
+            </div>
+          </div>
+
           {[
             { id: 'complaint', icon: '📝', label: 'File Civic Complaint', desc: 'Garbage, potholes, safety, noise' },
             { id: 'services', icon: '🏛️', label: 'Public Services', desc: 'Property Tax, Birth Certificate' },

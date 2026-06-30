@@ -620,7 +620,9 @@ const resources = {
       // CM Greeting
       "Rekha gupta ji": "रेखा गुप्ता जी",
       "Chief Minister of Delhi": "मुख्यमंत्री, दिल्ली",
-      "We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.": "हम दिल्ली को पारदर्शी, उत्तरदायी और डिजिटल नागरिक शासन के साथ एक विश्व स्तरीय शहर बनाने के लिए प्रतिबद्ध हैं। दिल्ली-कनेक्ट शिकायतों को दर्ज करने और ट्रैक करने के लिए आपका सीधा संपर्क है।"
+      "We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.": "हम दिल्ली को पारदर्शी, उत्तरदायी और डिजिटल नागरिक शासन के साथ एक विश्व स्तरीय शहर बनाने के लिए प्रतिबद्ध हैं। दिल्ली-कनेक्ट शिकायतों को दर्ज करने और ट्रैक करने के लिए आपका सीधा संपर्क है।",
+      "CM Portal Monitoring Suite": "सीएम पोर्टल निगरानी सूट",
+      "Hon'ble Chief Minister Rekha gupta ji": "माननीय मुख्यमंत्री रेखा गुप्ता जी"
     }
   }
 };

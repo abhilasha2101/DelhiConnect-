@@ -14,31 +14,31 @@ async function categorizeComplaint(text) {
     let confidence = 0.90;
     let reason = 'Rule-based categorization';
 
-    if (textLower.includes('garbage') || textLower.includes('waste') || textLower.includes('trash') || textLower.includes('dump') || textLower.includes('dustbin') || textLower.includes('litter') || textLower.includes('clean')) {
-      category = 'Garbage / Waste';
-      subCategory = 'Solid Waste Accumulation';
+    if (textLower.includes('light') || textLower.includes('street light') || textLower.includes('dark') || textLower.includes('electricity') || textLower.includes('power') || textLower.includes('wire') || textLower.includes('blackout')) {
+      category = 'Street Light';
+      subCategory = 'Non-functional Street Light';
       priority = 'Medium';
-      assignDepartment = 'MCD - Municipal Corporation';
-    } else if (textLower.includes('pothole') || textLower.includes('road') || textLower.includes('damage') || textLower.includes('pavement') || textLower.includes('street')) {
-      category = 'Pothole / Road Damage';
-      subCategory = 'Road Pothole';
-      priority = 'High';
-      assignDepartment = 'PWD - Public Works Department';
+      assignDepartment = 'BSES Yamuna / BSES Rajdhani / Tata Power';
     } else if (textLower.includes('sewer') || textLower.includes('drain') || textLower.includes('drainage') || textLower.includes('overflow') || textLower.includes('gutter') || textLower.includes('clog')) {
       category = 'Sewer Problem';
       subCategory = 'Sewer Line Blockage';
       priority = 'High';
       assignDepartment = 'Delhi Jal Board';
-    } else if (textLower.includes('light') || textLower.includes('street light') || textLower.includes('dark') || textLower.includes('electricity') || textLower.includes('power') || textLower.includes('wire') || textLower.includes('blackout')) {
-      category = 'Street Light';
-      subCategory = 'Non-functional Street Light';
-      priority = 'Medium';
-      assignDepartment = 'BSES Yamuna / BSES Rajdhani / Tata Power';
     } else if (textLower.includes('water') || textLower.includes('drinking water') || textLower.includes('dirty water') || textLower.includes('no water') || textLower.includes('leakage') || textLower.includes('pipeline')) {
       category = 'Water Issue';
       subCategory = 'Water Supply Shortage';
       priority = 'High';
       assignDepartment = 'Delhi Jal Board';
+    } else if (textLower.includes('garbage') || textLower.includes('waste') || textLower.includes('trash') || textLower.includes('dump') || textLower.includes('dustbin') || textLower.includes('litter') || textLower.includes('clean')) {
+      category = 'Garbage / Waste';
+      subCategory = 'Solid Waste Accumulation';
+      priority = 'Medium';
+      assignDepartment = 'MCD - Municipal Corporation';
+    } else if (textLower.includes('pothole') || textLower.includes('road') || textLower.includes('pavement') || textLower.includes('tar') || textLower.includes('crater')) {
+      category = 'Pothole / Road Damage';
+      subCategory = 'Road Pothole';
+      priority = 'High';
+      assignDepartment = 'PWD - Public Works Department';
     } else if (textLower.includes('health') || textLower.includes('hospital') || textLower.includes('clinic') || textLower.includes('disease') || textLower.includes('dengue') || textLower.includes('malaria') || textLower.includes('mosquito')) {
       category = 'Health Issue';
       subCategory = 'Public Health Concern';

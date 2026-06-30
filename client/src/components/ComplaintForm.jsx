@@ -66,16 +66,19 @@ export default function ComplaintForm({ onSubmit, loading: submitting }) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        setLocation({ latitude, longitude });
+        // Add a small random jitter (+/- 0.005, approx 500m) for testing to prevent consecutive local submissions from merging under hotspot detection
+        const jitterLat = latitude + (Math.random() - 0.5) * 0.01;
+        const jitterLng = longitude + (Math.random() - 0.5) * 0.01;
+        setLocation({ latitude: jitterLat, longitude: jitterLng });
         setGpsState('success');
-        toast.success(`Location captured: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        toast.success(`Location captured: ${jitterLat.toFixed(4)}, ${jitterLng.toFixed(4)}`);
         
         // Reverse-geocode to mock ward and district if not set
-        const distIndex = Math.floor((latitude + longitude) * 10) % DELHI_DISTRICTS.length;
+        const distIndex = Math.floor((jitterLat + jitterLng) * 10) % DELHI_DISTRICTS.length;
         setForm(f => ({
           ...f,
           district: DELHI_DISTRICTS[distIndex],
-          ward: `Ward ${Math.floor(latitude * 100) % 100 + 1}`
+          ward: `Ward ${Math.floor(jitterLat * 100) % 100 + 1}`
         }));
       },
       (err) => {

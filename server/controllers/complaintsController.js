@@ -124,25 +124,32 @@ const createComplaint = async (req, res) => {
         );
         
         if (distance <= 200) {
-          // Hotspot match found! Merge into existing complaint
-          existing.isHotspot = true;
-          existing.reporterCount += 1;
-          existing.linkedReporters.push({
-            citizenId: actualCitizenId,
-            name: citizenName || req.user?.name || 'Anonymous',
-            phone: citizenPhone || req.user?.phone,
-            submittedAt: actualCreatedAt,
-            photo: req.files && req.files.length > 0 ? `/uploads/${req.files[0].filename}` : null
-          });
-          
-          await existing.save();
+          // Check if it's the same citizen submitting multiple complaints (do not merge their own complaints)
+          const isSameCitizen = 
+            (existing.citizenId && actualCitizenId && existing.citizenId.toString() === actualCitizenId.toString()) ||
+            (existing.citizenPhone && (citizenPhone || req.user?.phone) && existing.citizenPhone === (citizenPhone || req.user?.phone));
 
-          // Notify citizen of the merged submission
-          if (citizenPhone || req.user?.phone) {
-            await notifyStatus(citizenPhone || req.user.phone, existing._id, 'Submitted (Hotspot Linked)');
+          if (!isSameCitizen) {
+            // Hotspot match found! Merge into existing complaint
+            existing.isHotspot = true;
+            existing.reporterCount += 1;
+            existing.linkedReporters.push({
+              citizenId: actualCitizenId,
+              name: citizenName || req.user?.name || 'Anonymous',
+              phone: citizenPhone || req.user?.phone,
+              submittedAt: actualCreatedAt,
+              photo: req.files && req.files.length > 0 ? `/uploads/${req.files[0].filename}` : null
+            });
+            
+            await existing.save();
+
+            // Notify citizen of the merged submission
+            if (citizenPhone || req.user?.phone) {
+              await notifyStatus(citizenPhone || req.user.phone, existing._id, 'Submitted (Hotspot Linked)');
+            }
+
+            return res.status(201).json(existing);
           }
-
-          return res.status(201).json(existing);
         }
       }
     }

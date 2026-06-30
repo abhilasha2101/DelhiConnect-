@@ -622,7 +622,20 @@ const resources = {
       "Chief Minister of Delhi": "मुख्यमंत्री, दिल्ली",
       "We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.": "हम दिल्ली को पारदर्शी, उत्तरदायी और डिजिटल नागरिक शासन के साथ एक विश्व स्तरीय शहर बनाने के लिए प्रतिबद्ध हैं। दिल्ली-कनेक्ट शिकायतों को दर्ज करने और ट्रैक करने के लिए आपका सीधा संपर्क है।",
       "CM Portal Monitoring Suite": "सीएम पोर्टल निगरानी सूट",
-      "Hon'ble Chief Minister Rekha gupta ji": "माननीय मुख्यमंत्री रेखा गुप्ता जी"
+      "Hon'ble Chief Minister Rekha gupta ji": "माननीय मुख्यमंत्री रेखा गुप्ता जी",
+      "Welcome to the central administrative dashboard for DelhiConnect. This console enables real-time oversight of citizen grievances across all 11 districts of the National Capital Territory. Monitor resolution rates, analyze departmental workloads, view active complaint hotspots, and generate performance reports to ensure strict SLA compliance.": "दिल्ली-कनेक्ट के केंद्रीय प्रशासनिक डैशबोर्ड में आपका स्वागत है। यह कंसोल राष्ट्रीय राजधानी क्षेत्र के सभी 11 जिलों में नागरिक शिकायतों की वास्तविक समय में निगरानी करने में सक्षम बनाता है। सख्त एसएलए अनुपालन सुनिश्चित करने के लिए समाधान दरों की निगरानी करें, विभागीय कार्यभार का विश्लेषण करें, सक्रिय शिकायत हॉटस्पॉट देखें और प्रदर्शन रिपोर्ट जनरेट करें।",
+      "Secure Admin Session": "सुरक्षित एडमिन सत्र",
+      "Live Data Feed Connected": "लाइव डेटा फ़ीड कनेक्टेड",
+      "CM Strategic Directives": "सीएम रणनीतिक निर्देश",
+      "Live Focus": "लाइव फोकस",
+      "SLA Overdue Escalation": "एसएलए ओवरड्यू एस्केलेशन",
+      "Action Needed": "कार्रवाई की आवश्यकता",
+      "Expedite action on pending sewer and road complaints exceeding 72 hours SLA in North & East districts.": "उत्तर और पूर्वी जिलों में 72 घंटे एसएलए से अधिक लंबित सीवर और सड़क शिकायतों पर कार्रवाई में तेजी लाएं।",
+      "Citizen Reopened Grievances": "नागरिकों द्वारा पुन: खोली गई शिकायतें",
+      "Officer review mandated for citizen dissatisfaction replies on resolved tickets to maintain transparency.": "पारदर्शिता बनाए रखने के लिए हल किए गए टिकटों पर नागरिकों के असंतोष के जवाबों की अधिकारी समीक्षा अनिवार्य है।",
+      "Hotspot Sanitation Drives": "हॉटस्पॉट स्वच्छता अभियान",
+      "Active Drive": "सक्रिय अभियान",
+      "Coordinate garbage dump clean-ups in areas with high-density duplicate reports to optimize resources.": "संसाधनों को अनुकूलित करने के लिए उच्च घनत्व वाले डुप्लिकेट रिपोर्ट वाले क्षेत्रों में कचरा डंप की सफाई का समन्वय करें।"
     }
   }
 };

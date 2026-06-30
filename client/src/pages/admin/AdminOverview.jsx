@@ -28,17 +28,14 @@ export default function AdminOverview() {
   return (
     <Layout title="CM Dashboard — Overview">
       <div className="space-y-6 animate-fade-in">
-        {/* CM Welcome Banner */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col md:flex-row items-center gap-5 shadow-sm">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-900 shadow-inner flex-shrink-0">
+        {/* Top Layout: CM Profile Banner (Horizontal, big photo, only name & title, no description) */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center gap-6 shadow-sm">
+          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-blue-900 shadow-md flex-shrink-0">
             <img src="/images/cm.png" alt="CM Rekha Gupta" className="w-full h-full object-cover object-top" />
           </div>
-          <div className="text-center md:text-left">
-            <h2 className="text-lg font-bold text-slate-800">{t('CM Portal Monitoring Suite')}</h2>
-            <p className="text-sm text-blue-950 font-bold mt-0.5">{t("Hon'ble Chief Minister Rekha gupta ji")}</p>
-            <p className="text-xs text-slate-500 mt-2 max-w-2xl leading-relaxed">
-              "{t('We are committed to making Delhi a world-class city with transparent, responsive, and digital civic governance. DelhiConnect is your direct line to register and track grievances.')}"
-            </p>
+          <div>
+            <h2 className="text-xl font-extrabold text-slate-800 leading-snug">{t('Rekha gupta ji')}</h2>
+            <p className="text-sm text-blue-900 font-bold mt-1">{t('Chief Minister of Delhi')}</p>
           </div>
         </div>
 

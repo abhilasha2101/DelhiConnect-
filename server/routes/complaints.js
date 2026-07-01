@@ -3,10 +3,11 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { protect, requireRole, optionalAuth } = require('../middleware/auth');
+const { validateGrievanceUpload } = require('../middleware/validateGrievanceUpload');
 const {
   createComplaint, getComplaints, getComplaintById, getComplaintByGrievanceId,
   updateStatus, assignComplaint, resolveComplaint, submitFeedback,
-  toggleVote, addComment
+  toggleVote, addComment, verifyResolutionCoordinates
 } = require('../controllers/complaintsController');
 
 const storage = multer.diskStorage({
@@ -15,13 +16,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-router.post('/', optionalAuth, upload.any(), createComplaint);
+router.post('/', optionalAuth, upload.any(), validateGrievanceUpload, createComplaint);
 router.get('/', protect, getComplaints);
 router.get('/track/:grievanceId', getComplaintByGrievanceId);
 router.get('/:id', protect, getComplaintById);
 router.patch('/:id/status', protect, requireRole('officer', 'admin'), updateStatus);
 router.patch('/:id/assign', protect, requireRole('admin'), assignComplaint);
 router.post('/:id/resolve', protect, requireRole('officer', 'admin'), upload.any(), resolveComplaint);
+router.post('/:id/verify-resolution', protect, requireRole('officer', 'admin'), verifyResolutionCoordinates);
 router.post('/:id/feedback', protect, submitFeedback);
 router.post('/:id/vote', protect, toggleVote);
 router.post('/:id/comment', protect, addComment);

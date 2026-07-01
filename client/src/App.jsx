@@ -14,6 +14,7 @@ import AdminComplaints from './pages/admin/AdminComplaints';
 import AdminHeatmap from './pages/admin/AdminHeatmap';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminReports from './pages/admin/AdminReports';
+import ChatbotWidget from './components/ChatbotWidget';
 
 // Route guards
 function RequireAuth({ children, roles }) {
@@ -93,6 +94,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
+        <ChatbotWidget />
       </AuthProvider>
     </BrowserRouter>
   );

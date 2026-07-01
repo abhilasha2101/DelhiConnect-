@@ -3,6 +3,7 @@ import Layout from '../../components/Layout';
 import { TrendChart, CategoryChart, DeptPieChart, DepartmentTable } from '../../components/Charts';
 import { analyticsAPI } from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import DelhiDistrictMap from '../../components/DelhiDistrictMap';
 
 export default function AdminAnalytics() {
   const { t } = useTranslation();
@@ -83,23 +84,8 @@ export default function AdminAnalytics() {
           <DepartmentTable data={depts} loading={loading} />
         </div>
 
-        {/* District Stats */}
-        <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">📍 {t('District-wise Complaint Count')}</h2>
-          <div className="space-y-2">
-            {districts.map((d, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-sm text-slate-600 w-44 truncate">{d._id ? t(d._id) : t('Unknown')}</span>
-                <div className="flex-1 bg-slate-100 rounded-full h-2">
-                  <div className="bg-blue-900 h-2 rounded-full transition-all"
-                    style={{ width: `${districts[0]?.count ? (d.count / districts[0].count) * 100 : 0}%` }} />
-                </div>
-                <span className="text-sm font-bold text-slate-700 w-10 text-right">{d.count}</span>
-                <span className="text-xs text-green-700 w-12 text-right">{d.resolved || 0} ✓</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* District Stats SVG Map */}
+        <DelhiDistrictMap />
       </div>
     </Layout>
   );

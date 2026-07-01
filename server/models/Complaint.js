@@ -47,6 +47,8 @@ const complaintSchema = new mongoose.Schema({
   aiCategory: { type: String },
   aiPriority: { type: String },
   aiReason: { type: String },
+  trustScore: { type: Number, default: 1.0 },
+  trustReason: { type: String, default: 'No image uploaded' },
   statusHistory: [{
     status: String,
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

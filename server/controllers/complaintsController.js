@@ -173,6 +173,8 @@ const createComplaint = async (req, res) => {
     aiCategory: aiData.category,
     aiPriority: aiData.priority,
     aiReason: aiData.reason,
+    trustScore: req.trustScore,
+    trustReason: req.trustReason,
     assignedDepartment: geoRouting.assignedDepartment,
     slaDeadline,
     photos: req.files?.map(f => `/uploads/${f.filename}`) || [],
@@ -341,12 +343,35 @@ const assignComplaint = async (req, res) => {
 // POST /api/complaints/:id/resolve
 const resolveComplaint = async (req, res) => {
   try {
-    const { resolutionNotes } = req.body;
+    const { resolutionNotes, officerLat, officerLng } = req.body;
     const complaint = await Complaint.findById(req.params.id);
     if (!complaint) return res.status(404).json({ message: 'Complaint not found' });
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: 'Resolution photo proof is required.' });
+    }
+
+    // Geo-Lock Verification (Anti-Cheat Hook)
+    if (complaint.coordinates && complaint.coordinates.lat && complaint.coordinates.lng) {
+      if (!officerLat || !officerLng) {
+        // Delete uploaded proof
+        try { fs.unlinkSync(req.files[0].path); } catch (e) {}
+        return res.status(400).json({ message: 'Officer GPS coordinates are required to verify resolution location (Anti-Cheat Hook).' });
+      }
+
+      const distance = getHaversineDistance(
+        Number(complaint.coordinates.lat), Number(complaint.coordinates.lng),
+        Number(officerLat), Number(officerLng)
+      );
+
+      if (distance > 50) {
+        // Delete uploaded proof
+        try { fs.unlinkSync(req.files[0].path); } catch (e) {}
+        return res.status(403).json({
+          message: `Anti-Cheat Hook Blocked Resolution: Officer is too far from the incident. You must be within 50 meters to mark it resolved. Distance variance: ${Math.round(distance)}m.`,
+          distanceVariance: distance
+        });
+      }
     }
 
     complaint.status = 'Resolved';
@@ -358,10 +383,13 @@ const resolveComplaint = async (req, res) => {
       status: 'Resolved',
       changedBy: req.user?._id,
       changedByName: req.user?.name || 'Officer',
-      notes: resolutionNotes || 'Complaint resolved'
+      notes: resolutionNotes || 'Complaint resolved with verified GPS photo proof'
     });
 
     await complaint.save();
+
+    // Trigger feedback hook simulation
+    console.log(`[Feedback Hook Simulation] Complaint ${complaint.grievanceId} marked Resolved. Invoking automated citizen satisfaction feedback poll to ${complaint.citizenPhone || 'registered number'}.`);
 
     if (complaint.citizenPhone) {
       await notifyStatus(complaint.citizenPhone, complaint._id, 'Resolved');
@@ -474,6 +502,44 @@ const addComment = async (req, res) => {
   }
 };
 
+// POST /api/complaints/:id/verify-resolution
+const verifyResolutionCoordinates = async (req, res) => {
+  try {
+    const { officerLat, officerLng } = req.body;
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) return res.status(404).json({ message: 'Complaint not found' });
+
+    if (!complaint.coordinates || !complaint.coordinates.lat || !complaint.coordinates.lng) {
+      return res.json({ verified: true, distance: 0, message: 'No coordinates in original complaint to verify.' });
+    }
+
+    if (!officerLat || !officerLng) {
+      return res.status(400).json({ message: 'Officer latitude and longitude coordinates are required.' });
+    }
+
+    const distance = getHaversineDistance(
+      Number(complaint.coordinates.lat), Number(complaint.coordinates.lng),
+      Number(officerLat), Number(officerLng)
+    );
+
+    if (distance > 55) { // 50m limit + 5m GPS tolerance margin
+      return res.status(400).json({
+        verified: false,
+        distance,
+        message: `Anti-Cheat validation failed. Variance ${Math.round(distance)}m exceeds the 50-meter restriction.`
+      });
+    }
+
+    res.json({
+      verified: true,
+      distance,
+      message: 'Coordinates verified within 50-meter limit.'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   createComplaint,
   getComplaints,
@@ -484,5 +550,6 @@ module.exports = {
   resolveComplaint,
   submitFeedback,
   toggleVote,
-  addComment
+  addComment,
+  verifyResolutionCoordinates
 };

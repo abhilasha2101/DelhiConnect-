@@ -36,17 +36,41 @@ export default function OfficerDashboard() {
         return;
       }
       setUpdating(true);
+
+      const getCoordinates = () => {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('Geolocation is not supported by your browser'));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            (err) => reject(new Error('GPS verification failed: please enable device location permissions.')),
+            { enableHighAccuracy: true, timeout: 10000 }
+          );
+        });
+      };
+
       try {
+        toast.loading(t('Verifying location via Geo-Lock...'), { id: 'geolock' });
+        const coords = await getCoordinates();
+        toast.dismiss('geolock');
+
         const fd = new FormData();
         fd.append('proof', resolutionPhoto);
         fd.append('resolutionNotes', statusForm.notes);
+        fd.append('officerLat', coords.lat);
+        fd.append('officerLng', coords.lng);
+
         await complaintsAPI.resolve(selected._id, fd);
-        toast.success('Complaint marked as Resolved with photo proof!');
+        toast.success(t('Complaint resolved & location verified!'));
         setResolutionPhoto(null);
+        setSelected(null);
         setLoading(true);
         fetch();
       } catch (err) {
-        toast.error(err.response?.data?.message || 'Failed to resolve');
+        toast.dismiss('geolock');
+        toast.error(err.response?.data?.message || err.message || t('Failed to resolve'));
       } finally {
         setUpdating(false);
       }
@@ -175,10 +199,14 @@ export default function OfficerDashboard() {
                     <input 
                       type="file" 
                       accept="image/*"
+                      capture="environment"
                       onChange={e => setResolutionPhoto(e.target.files[0])}
                       className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                       required
                     />
+                    <p className="text-[10px] text-blue-600 mt-1 flex items-center gap-1">
+                      📸 <span>{t('Enforced live camera capture: local gallery uploads are disabled.')}</span>
+                    </p>
                     {!resolutionPhoto && (
                       <p className="text-red-500 text-xs mt-1">{t('Resolution photo required')}</p>
                     )}

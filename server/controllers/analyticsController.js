@@ -57,12 +57,15 @@ const getOverview = async (req, res) => {
 // GET /api/analytics/heatmap
 const getHeatmap = async (req, res) => {
   const points = await Complaint.find({ 'coordinates.lat': { $exists: true } })
-    .select('coordinates status priority category isHotspot reporterCount');
+    .select('coordinates status priority category isHotspot reporterCount assignedDepartment slaDeadline');
   res.json(points.map(p => {
     let baseWeight = { Critical: 4, High: 3, Medium: 2, Low: 1 }[p.priority] || 1;
     // Hotspots get exponentially more weight to stand out on the heatmap
     let weight = p.isHotspot ? Math.max(6, baseWeight + p.reporterCount * 2) : baseWeight;
     
+    // Check SLA Breach (resolved status history or deadline compared to current time)
+    const isSlabreach = p.status !== 'Resolved' && p.status !== 'Closed' && p.slaDeadline && new Date() > new Date(p.slaDeadline);
+
     return {
       lat: p.coordinates.lat,
       lng: p.coordinates.lng,
@@ -70,7 +73,10 @@ const getHeatmap = async (req, res) => {
       status: p.status,
       category: p.category,
       isHotspot: p.isHotspot,
-      reporterCount: p.reporterCount
+      reporterCount: p.reporterCount,
+      assignedDepartment: p.assignedDepartment || 'General Administration',
+      slaBreached: !!isSlabreach,
+      priority: p.priority
     };
   }));
 };

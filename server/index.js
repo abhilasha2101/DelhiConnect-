@@ -47,11 +47,13 @@ app.get('/api/health', (req, res) => res.json({
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/delhiconnect')
   .then(() => {
     console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
   })
   .catch(err => {
     console.error('❌ MongoDB connection failed:', err.message);
-    process.exit(1);
   });
+
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+}
 
 module.exports = app;

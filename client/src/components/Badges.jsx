@@ -45,3 +45,28 @@ export function AIBadge({ score, category }) {
     </span>
   );
 }
+
+export function TrustBadge({ score, reason }) {
+  const { t } = useTranslation();
+  if (score === undefined || score === null) return null;
+  const scorePercent = Math.round(score * 100);
+  let color = 'text-green-700 bg-green-50 border-green-200';
+  let label = t('High Trust');
+  let icon = '✅';
+
+  if (score < 0.4) {
+    color = 'text-red-700 bg-red-50 border-red-200';
+    label = t('Suspicious');
+    icon = '🚨';
+  } else if (score < 0.8) {
+    color = 'text-yellow-700 bg-yellow-50 border-yellow-200';
+    label = t('Medium Trust');
+    icon = '⚠';
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${color}`} title={reason}>
+      {icon} {label} ({scorePercent}%)
+    </span>
+  );
+}

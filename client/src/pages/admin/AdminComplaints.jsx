@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Layout from '../../components/Layout';
 import { complaintsAPI } from '../../services/api';
 import { DELHI_DISTRICTS, CATEGORIES, STATUS_OPTIONS, PRIORITY_OPTIONS, DEPARTMENTS } from '../../utils/constants';
-import { StatusBadge, PriorityBadge, SLABadge, AIBadge } from '../../components/Badges';
+import { StatusBadge, PriorityBadge, SLABadge, AIBadge, TrustBadge } from '../../components/Badges';
 import StatusTimeline from '../../components/StatusTimeline';
 import { formatDateTime, translateDepartment } from '../../utils/helpers';
 import toast from 'react-hot-toast';
@@ -252,12 +252,20 @@ export default function AdminComplaints() {
                 <PriorityBadge priority={detail.priority} />
                 <SLABadge breached={detail.slaBreached} deadline={detail.slaDeadline} />
                 <AIBadge score={detail.aiConfidenceScore} category={detail.aiCategory} />
+                <TrustBadge score={detail.trustScore} reason={detail.trustReason} />
                 {detail.isHotspot && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200 shadow-sm">
                     🔥 {t('Hotspot')} Ticket
                   </span>
                 )}
               </div>
+
+              {detail.trustReason && (
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 mb-4 flex items-center gap-2">
+                  <span className="text-slate-400">🛡</span>
+                  <span><strong>{t('Trust Audit Analysis')}:</strong> {t(detail.trustReason)}</span>
+                </div>
+              )}
 
               <p className="text-slate-600 text-sm mb-4">{translateComplaintText(detail.description)}</p>
 

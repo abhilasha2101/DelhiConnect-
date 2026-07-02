@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { complaintsAPI } from '../../services/api';
 import Layout from '../../components/Layout';
 import { useAuth } from '../../context/AuthContext';
-import { StatusBadge, PriorityBadge } from '../../components/Badges';
+import { StatusBadge, PriorityBadge, TrustBadge } from '../../components/Badges';
 import StatusTimeline from '../../components/StatusTimeline';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -176,8 +176,16 @@ export default function OfficerDashboard() {
                 <div className="flex gap-2 mt-2">
                   <StatusBadge status={selected.status} />
                   <PriorityBadge priority={selected.priority} />
+                  <TrustBadge score={selected.trustScore} reason={selected.trustReason} />
                 </div>
               </div>
+
+              {selected.trustReason && (
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 mb-4 flex items-center gap-2">
+                  <span className="text-slate-400">🛡</span>
+                  <span><strong>{t('Trust Audit Analysis')}:</strong> {t(selected.trustReason)}</span>
+                </div>
+              )}
 
               <form onSubmit={handleUpdateStatus} className="space-y-4">
                 <div>

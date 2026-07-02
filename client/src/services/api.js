@@ -63,6 +63,7 @@ export const reportsAPI = {
 // AI
 export const aiAPI = {
   categorize: (text) => api.post('/ai/categorize', { text }),
+  chat: (text, coordinates) => api.post('/ai/chat', { text, coordinates }),
 };
 
 export default api;
